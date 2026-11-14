@@ -3,7 +3,6 @@
 import React, {useState, useEffect} from 'react';
 import { CustomLink, Bars } from './Link_Function';
 import { usePathname, useRouter } from 'next/navigation';
-import {Outlet} from 'react-router-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -149,7 +148,6 @@ export default function Header() {
                 </div>
             </div>
             <Bars />
-            <Outlet />
         </>
     );
 }
