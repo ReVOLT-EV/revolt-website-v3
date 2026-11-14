@@ -42,7 +42,7 @@ export default function TeamTabs({ teams }: { teams: SubTeam[] }) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Sub-teams" className="-mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
+      <div role="tablist" aria-label="Sub-teams" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {teams.map((t, i) => {
           const on = t.id === active;
           return (
@@ -56,7 +56,7 @@ export default function TeamTabs({ teams }: { teams: SubTeam[] }) {
               tabIndex={on ? 0 : -1}
               onClick={() => select(t.id)}
               onKeyDown={(e) => onKey(e, i)}
-              className={`btn shrink-0 gap-3 ${on ? "btn-volt" : "btn-line text-chalk"}`}
+              className={`btn min-h-12 justify-between gap-3 px-5 sm:justify-center ${on ? "btn-volt" : "btn-line text-chalk"}`}
             >
               {t.name}
               <span className={`font-mono text-xs ${on ? "text-asphalt/60" : "text-muted"}`}>{t.members.length}</span>
@@ -65,18 +65,18 @@ export default function TeamTabs({ teams }: { teams: SubTeam[] }) {
         })}
       </div>
 
-      <div key={team.id} role="tabpanel" id={`panel-${team.id}`} aria-labelledby={`tab-${team.id}`} className="mt-10 animate-[fadeUp_.4s_ease-out]">
-        <div className="mb-10 grid items-center gap-8 lg:grid-cols-[1fr_1.1fr]">
+      <div key={team.id} role="tabpanel" id={`panel-${team.id}`} aria-labelledby={`tab-${team.id}`} className="mt-8 animate-[fadeUp_.4s_ease-out] sm:mt-10">
+        <div className="mb-8 grid items-center gap-6 sm:mb-10 sm:gap-8 lg:grid-cols-[1fr_1.1fr]">
           <div>
-            <h2 className="h-display text-[clamp(28px,4vw,52px)]">{team.name}</h2>
-            <p className="mt-5 max-w-md text-chalk/70">{team.blurb}</p>
+            <h2 className="h-display text-[clamp(26px,4vw,52px)]">{team.name}</h2>
+            <p className="mt-3 max-w-md text-chalk/70 sm:mt-5">{team.blurb}</p>
           </div>
-          <div className="relative aspect-[16/9] overflow-hidden rounded-[var(--radius-card)] border border-line">
+          <div className="relative aspect-[2/1] overflow-hidden rounded-[var(--radius-card)] border border-line sm:aspect-[16/9]">
             <Image src={team.photo} alt={`${team.name} sub-team at work`} fill sizes="(min-width:1024px) 640px, 100vw" className="object-cover" priority />
           </div>
         </div>
 
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
           {team.members.map((m) => (
             <li key={m.name} className="card group overflow-hidden">
               <div className="relative aspect-[4/5] overflow-hidden bg-graphite">
@@ -88,8 +88,8 @@ export default function TeamTabs({ teams }: { teams: SubTeam[] }) {
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               </div>
-              <div className="p-4">
-                <p className="font-medium leading-tight">{m.name}</p>
+              <div className="p-3 sm:p-4">
+                <p className="text-[15px] font-medium leading-tight sm:text-base">{m.name}</p>
                 <p className={`mt-1 font-mono text-[11px] uppercase tracking-[0.08em] ${/lead|director|president|treasurer|manager/i.test(m.role) ? "text-volt" : "text-muted"}`}>{m.role}</p>
               </div>
             </li>
