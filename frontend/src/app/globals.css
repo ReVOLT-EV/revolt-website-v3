@@ -1,17 +1,150 @@
 @import "tailwindcss";
 
-:root {
-  --background: #000000;
+/*
+  ReVOLT v3 design tokens.
+  Tailwind 4 turns every --color-* / --font-* here into utilities
+  (bg-volt, text-chalk, font-display, ...).
+*/
+@theme {
+  --color-volt: #c8f031;
+  --color-volt-deep: #9cc21a;
+  --color-glacier: #8fe3ff;
+  --color-asphalt: #0b0c0e;
+  --color-night: #07080a;
+  --color-graphite: #1f2226;
+  --color-steel: #2c3036;
+  --color-chalk: #f2f3ee;
+  --color-muted: #9aa0a6;
+  --color-line: rgb(242 243 238 / 0.12);
+
+  --font-display: var(--font-stalinist), "Arial Black", sans-serif;
+  --font-body: var(--font-roboto), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-pixel: var(--font-pixel-raw), monospace;
+
+  --radius-card: 20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-  }
+:root {
+  color-scheme: dark;
+  --gutter: clamp(16px, 4vw, 48px);
+  --header-h: 72px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);
 }
 
 body {
-  background: var(--background);
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-asphalt);
+  color: var(--color-chalk);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-volt);
+  color: var(--color-asphalt);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-volt);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .gutter {
+    padding-inline: var(--gutter);
+  }
+  .wrap {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-volt);
+  }
+  /* Stalinist One has a single weight; hierarchy comes from size + colour */
+  .h-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font: 500 16px var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-volt {
+    background: var(--color-volt);
+    color: var(--color-asphalt);
+  }
+  .btn-volt:hover {
+    background: #d6f75c;
+  }
+  .btn-dark {
+    background: var(--color-asphalt);
+    color: var(--color-chalk);
+  }
+  .btn-line {
+    border-color: currentColor;
+    background: transparent;
+  }
+  .btn-line:hover {
+    background: rgb(242 243 238 / 0.08);
+  }
+  .card {
+    background: #141619;
+    border: 1px solid rgb(242 243 238 / 0.08);
+    border-radius: var(--radius-card);
+  }
+}
+
+/* Scroll lock used by the intro game */
+html.intro-locked,
+html.intro-locked body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
