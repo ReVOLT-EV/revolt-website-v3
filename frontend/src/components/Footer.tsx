@@ -1,78 +1,74 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { CopyLinkFooter } from "./Link_Function";
-import fs from "@/styles/Footer.module.scss";
+import { useState } from "react";
+
+import { Wordmark } from "@/components/brand/Logo";
+import { site } from "@/content/site";
+
+function CopyEmail() {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        navigator.clipboard?.writeText(site.email).then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1800);
+        });
+      }}
+      className="text-left text-chalk/80 hover:text-volt"
+    >
+      {copied ? "Copied!" : site.email}
+    </button>
+  );
+}
 
 export default function Footer() {
-    return (
-        <div className={fs.footer}>
-            <div className={fs.footer_section_1}>
-                <div className={fs.footer_image}>
-                    <Image
-                        width={1000}
-                        height={1000}
-                        src="/revolt_logo.png"
-                        alt="ReVOLT EV Logo"
-                        className={fs.footer_img}
-                    />
-                </div>
-            </div>
-            <div className={fs.footer_section_2}>
-                <div className={fs.footer_text}>
-                    <p className={fs.footer_text_style}>2500 University Dr NW, Calgary</p>
-                    <p className={fs.footer_text_style}>Copyright © 2025 ReVOLT EV</p>
-                    <p className={fs.footer_text_style}>All rights reserved</p>
-                </div>
-            </div>
-            <div className={fs.footer_section_3}>
-                <Link 
-                    href="https://suuofc.campuslabs.ca/engage/organization/revoltev" 
-                    target="_blank"
-                    rel="noopener noreferrer" 
-                >
-                    <Image
-                        width={750} height={750}
-                        src="/page_icons/uofc_icon.png" alt="SU UofC Icon"
-                        className={fs.footer_icons}
-                    />
-                </Link>
+  return (
+    <footer className="gutter border-t border-line bg-night pt-16 pb-10">
+      <div className="wrap">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div className="flex flex-col gap-5">
+            <Wordmark size={28} />
+            <p className="max-w-xs text-chalk/60">
+              University of Calgary students rebuilding gas motorcycles and snowmobiles as electric race machines.
+            </p>
+          </div>
 
-                <CopyLinkFooter/>
+          <div className="flex flex-col gap-3">
+            <p className="eyebrow mb-1">Explore</p>
+            {site.nav.map((item) => (
+              <Link key={item.href} href={item.href} className="text-chalk/80 hover:text-volt">
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
-                <Link 
-                    href="https://www.instagram.com/revolt.ev_/?hl=en" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Image
-                        width={750} height={750}
-                        src="/page_icons/instagram_icon.png" alt="Instagram Icon"
-                        className={fs.footer_icons}
-                    />
-                </Link>
+          <div className="flex flex-col gap-3">
+            <p className="eyebrow mb-1">Follow</p>
+            {site.socials.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="text-chalk/80 hover:text-volt">
+                {s.label} ↗
+              </a>
+            ))}
+          </div>
 
-                <Link 
-                    href="https://www.linkedin.com/company/revolt-ev/about/" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Image
-                        width={750} height={750}
-                        src="/page_icons/linkedin_icon.png" alt="LinkedIn Icon"
-                        className={fs.footer_icons}
-                    />
-                </Link>
-            </div>
-            <div className={fs.footer_section_4}>
-                <Link href="/contact">
-                    <button className={fs.footer_button}>
-                        Contact Us
-                    </button>
-                </Link>
-            </div>
+          <div className="flex flex-col gap-3">
+            <p className="eyebrow mb-1">Get in touch</p>
+            <CopyEmail />
+            <p className="text-chalk/60">{site.address}</p>
+            <Link href="/contact" className="btn btn-line mt-2 self-start text-chalk">
+              Contact us
+            </Link>
+          </div>
         </div>
-    );
-};
+
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6 font-mono text-xs uppercase tracking-[0.1em] text-muted">
+          <span>© {new Date().getFullYear()} ReVOLT EV · All rights reserved</span>
+          <span>{site.tagline}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

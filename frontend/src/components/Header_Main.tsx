@@ -1,154 +1,127 @@
 "use client";
 
-import React, {useState, useEffect} from 'react';
-import { CustomLink, Bars } from './Link_Function';
-import { usePathname, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import axios from 'axios';
-axios.defaults.withCredentials = true;
+import { Wordmark } from "@/components/brand/Logo";
+import { useAuth } from "@/contexts/AuthContext";
+import { site } from "@/content/site";
 
-import SideBar from './Header_Side';
-import hs from "@/styles/Header.module.scss";
-
-const Header_Image = () => {
-    return (
-        <>
-            <div className={hs.header_img}>
-                <div className={hs.header_img_box}>
-                    <Image
-                        width={750}
-                        height={750}
-                        src="/revolt_logo_invert.png"
-                        alt="ReVOLT EV Logo"
-                        className={hs.img}
-                    />
-                </div>
-            </div>
-        </>
-    );
+function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/" || pathname === "/home";
+  return pathname.startsWith(href);
 }
 
-const Header_Menu = () => {
+function MemberLinks({ onNavigate }: { onNavigate?: () => void }) {
+  const { user, logout } = useAuth();
+  if (user) {
     return (
-        <nav className={hs.header_menu}>
-            <ul>
-                <li className={hs.header_menu_links}>
-                    <CustomLink to="/">Home</CustomLink>
-                </li>
-                <li className={hs.header_menu_links}>
-                    <CustomLink to="/team">Team</CustomLink>
-                </li>
-                <li className={hs.header_menu_links}>
-                    <CustomLink to="/vehicles">Vehicles</CustomLink>
-                </li>
-                <li className={hs.header_menu_links}>
-                    <CustomLink to="/sponsor-us">Sponsor Us</CustomLink>
-                </li>
-            </ul>
-        </nav>
+      <>
+        <Link href="/revolt-team" onClick={onNavigate} className="text-sm font-medium text-chalk/80 hover:text-volt">
+          Team portal
+        </Link>
+        <button type="button" onClick={() => { onNavigate?.(); logout(); }} className="text-sm font-medium text-chalk/60 hover:text-volt">
+          Log out
+        </button>
+      </>
     );
-};
-
-const Header_Login = () => {
-    const [loggedIn, setLoggedIn] = useState(false);
-    const pathname = usePathname();
-    const router = useRouter();
-
-    useEffect(() => {
-        axios.get('https://revolt-website-logsys.onrender.com/check', { withCredentials: true })
-            .then(res => {setLoggedIn(res.data.logged_in)
-        });
-    }, [pathname]);
-
-    const logout = () => {
-        axios.post('https://revolt-website-logsys.onrender.com/logout', {}, { withCredentials: true })
-            .then(() => {
-                setLoggedIn(false);
-            // Immediately re-check login status before updating state
-            return axios.get('https://revolt-website-logsys.onrender.com/check', { withCredentials: true });
-            })
-            .then(res => {
-            if (!res.data.logged_in) {
-                setLoggedIn(false);
-                router.push('/');
-            }
-            })
-            .catch(err => {
-            console.error("Logout error", err);
-            setLoggedIn(false);
-            router.push('/');
-        });
-    };
-
-
-    return (
-        <div className={hs.header_login}>
-            { loggedIn ? (
-                <div className={hs.hl_logout}>
-                    <button onClick={logout} className={hs.left}>
-                        <Link href="/">
-                            <Image
-                                width={750} height={750}
-                                src="/page_icons/logout_icon.png" alt="Logout Button"
-                                className={hs.logout_button}
-                            />
-                        </Link>
-                    </button>
-                    <button className={hs.right}>
-                        <Link href="/revolt-team">
-                            <Image
-                                width={750} height={750}
-                                src="/page_icons/team_icon.png" alt="ReVOLT Team Page"
-                                className={hs.team_button}
-                            />
-                        </Link>
-                    </button>
-                </div>
-            ) : (
-                <div className={hs.hl_login}>
-                    <button>
-                        <Link href="/login" className={hs.hl_container}>
-                            <Image
-                                width={750} height={750}
-                                src="/page_icons/login_icon.png" alt="Login Button"
-                                className={hs.login_button}
-                            />
-                        </Link>
-                    </button>
-                </div>
-            )}
-        </div>
-    );
-};
+  }
+  return (
+    <Link href="/login" onClick={onNavigate} className="text-sm font-medium text-chalk/60 hover:text-volt">
+      Member login
+    </Link>
+  );
+}
 
 export default function Header() {
-    const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 60); // adjust threshold as needed
-        };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+  // Close the mobile menu on route change and lock page scroll while it's open
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    return () => { document.documentElement.style.overflow = ""; };
+  }, [open]);
 
-    return (
-        <>
-            <div className={`${hs.header} ${scrolled ? hs.scrolled : ''}`}>
-                <div className={hs.header_main_menu}>
-                    <Header_Image />
-                    <Header_Menu />
-                    <Header_Login />
-                </div>
-                <div className={hs.header_side_menu}> 
-                    <SideBar />
-                </div>
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-200 ${
+        scrolled || open ? "border-b border-line bg-asphalt/85 backdrop-blur-md" : "border-b border-transparent bg-transparent"
+      }`}
+    >
+      <div className="gutter">
+        <div className="wrap flex h-[var(--header-h)] items-center justify-between gap-6">
+          <Link href="/" aria-label="ReVOLT home" className="rounded-md">
+            <Wordmark size={20} />
+          </Link>
+
+          <nav aria-label="Main" className="hidden items-center gap-8 lg:flex">
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                className={`text-[15px] font-medium transition-colors hover:text-volt ${
+                  isActive(pathname, item.href) ? "text-volt" : "text-chalk/80"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-5 lg:flex">
+            <MemberLinks />
+            <Link href="/sponsor-us" className="btn btn-volt min-h-11 px-5 text-[15px]">
+              Sponsor us
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-chalk lg:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M3 7h18M3 12h18M3 17h18" />}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <div id="mobile-menu" className="gutter h-[calc(100svh-var(--header-h))] overflow-y-auto bg-asphalt pb-10 lg:hidden">
+          <nav aria-label="Mobile" className="wrap flex flex-col pt-6">
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                className={`border-b border-line py-5 font-display text-2xl ${isActive(pathname, item.href) ? "text-volt" : "text-chalk"}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="mt-8 flex flex-wrap items-center gap-6">
+              <Link href="/sponsor-us" className="btn btn-volt">Sponsor us</Link>
+              <MemberLinks onNavigate={() => setOpen(false)} />
             </div>
-            <Bars />
-        </>
-    );
+          </nav>
+        </div>
+      )}
+    </header>
+  );
 }
-
