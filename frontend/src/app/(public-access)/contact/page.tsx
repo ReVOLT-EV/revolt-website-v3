@@ -1,64 +1,44 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 
-import React from "react";
-import ContactPage from "./contact_functions";
+import { PageHero } from "@/components/ui";
+import { site } from "@/content/site";
+import ContactForm from "./ContactForm";
 
-import contact_style from "@/styles/Contact.module.scss";
+export const metadata: Metadata = { title: "Contact" };
 
-function Contact_Main_Top() {
-    return (
-        <div className={contact_style.contact_main_top}>
-            <div className={contact_style.block}>
-                <div className={contact_style.img_block}>
-                    <div className={contact_style.img1} />
-                    <div className={contact_style.img2} />
-                    <div className={contact_style.img3} />
-                </div>
-                <div className={contact_style.title_block}>
-                    <div className={contact_style.text_area}>
-                        <p className={contact_style.text_style}>Contact Us</p>
-                    </div>  
-                </div>
+export default function ContactPage() {
+  return (
+    <main>
+      <PageHero
+        eyebrow="Get in touch"
+        title="Say it loud."
+        lead="Questions about the club, joining, sponsorships or anything else? Send us a message and we'll get back to you as soon as we can."
+      />
+
+      <section className="gutter pb-[clamp(64px,9vw,120px)]">
+        <div className="wrap grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <ContactForm />
+
+          <aside className="flex flex-col gap-4">
+            <div className="card p-7">
+              <p className="eyebrow mb-4 !text-muted">Email</p>
+              <a href={`mailto:${site.email}`} className="text-lg break-all hover:text-volt">{site.email}</a>
+              <p className="mt-6 eyebrow mb-2 !text-muted">Shop</p>
+              <p className="text-chalk/75">{site.address}</p>
+              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
+                {site.socials.map((s) => (
+                  <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="text-sm text-chalk/75 hover:text-volt">{s.label} ↗</a>
+                ))}
+              </div>
             </div>
-        </div>
-    );
-};
-
-function Contact_Main_Block_1() {
-    return (
-        <div className={contact_style.cmb1}>
-            <div className={contact_style.block}>
-                <div className={contact_style.text_section1}>
-                    <p className={contact_style.text_style}>
-                         If you would like to reach out to us or have any questions about the club (applications, operations, etc), please fill out the form below and we will try to get back to you as soon as possible. If you wish to contact us on mobile devices, copy the email address located at the bottom of the page.
-                    </p>
-                </div>
-                <div className={contact_style.text_section2}>
-                    <p className={contact_style.text_style}>
-                        Note: The form is for serious inquires only. Spam and inappropriate language will not be tolerated and will be dealt with accordingly.
-                    </p>
-                </div>
+            <div className="relative min-h-56 flex-1 overflow-hidden rounded-[var(--radius-card)] border border-line">
+              <Image src="/contact_page_media/cpm3.JPG" alt="ReVOLT members working in the engineering shop" fill sizes="(min-width:1024px) 480px, 100vw" className="object-cover" />
             </div>
+            <p className="px-1 text-sm text-muted">The form is for real inquiries only. Spam and inappropriate messages will be ignored.</p>
+          </aside>
         </div>
-    );
-};
-
-function Contact_Main_Block_2() {
-    return (
-        <div className={contact_style.cmb2}>
-            <ContactPage/>
-        </div>
-    );
-};
-
-export default function Contact_Main() {
-    return (
-        <>
-            <Contact_Main_Top/>
-            <div className={contact_style.empty_block}/>
-            <Contact_Main_Block_1/>
-            <div className={contact_style.empty_block}/>
-            <Contact_Main_Block_2/>
-            <div className={contact_style.empty_block}/>
-        </>
-    );
-};
+      </section>
+    </main>
+  );
+}

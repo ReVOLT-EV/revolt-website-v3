@@ -1,77 +1,69 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, {useState, useEffect} from 'react';
-import {useRouter} from 'next/navigation';
-import login_style from "@/styles/Login.module.scss";
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import axios from 'axios';
-axios.defaults.withCredentials = true;
+import { BoltV } from "@/components/brand/Logo";
+import { useAuth } from "@/contexts/AuthContext";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://revolt-website-logsys.onrender.com";
+
+const field =
+  "w-full rounded-xl border border-line bg-night px-4 py-3.5 text-chalk placeholder:text-muted/70 outline-none transition-colors focus:border-volt";
 
 export const LoginControl = () => {
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
-    const [inputUser, setInputUser] = useState('');
-    const [inputPass, setInputPass] = useState('');
+  const router = useRouter();
+  const { user, checkAuth } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-    const router = useRouter();
+  // Already signed in → straight to the portal
+  useEffect(() => {
+    if (user) router.push("/revolt-team");
+  }, [user, router]);
 
-    useEffect(() => {
-        axios.get('https://revolt-website-logsys.onrender.com/check', { withCredentials: true }).then((res) => {
-        if (res.data.loggedIn) {
-            setLoggedIn(true);
-            setUsername(res.data.user);
-            router.push('/revolt-team'); 
-        }
-        });
-    }, []);
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch(`${BACKEND_URL}/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) throw new Error("bad credentials");
+      await checkAuth();
+      router.push("/revolt-team");
+    } catch {
+      setError("Invalid username or password.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
-    const login = () => {
-        axios.post('https://revolt-website-logsys.onrender.com/login', {
-            username: inputUser,
-            password: inputPass
-        }).then(() => {
-            setLoggedIn(true);
-            setUsername(inputUser);
-            router.push('/revolt-team');
-        }).catch(() => alert("Invalid credentials"));
-    };
-
-    return (
-        <div className={login_style.login_container}>
-            {loggedIn ? (<div style={{ opacity: "0" }}>{username}</div>) : (
-                <>
-                    <div className={login_style.login_title}>
-                        <h1>ReVOLT Login</h1>
-                        <p>Login to Access ReVOLT Content</p>
-                    </div>
-                    <div className={login_style.login_cred_container}>
-                        <div className={login_style.login_user}>
-                            <input
-                                type="text"
-                                placeholder="Username"
-                                value={inputUser}
-                                onChange={e => setInputUser(e.target.value)}
-                                className={login_style.text_style}
-                            />
-                        </div>
-                        <div className={login_style.login_pass}>
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                value={inputPass}
-                                onChange={e => setInputPass(e.target.value)}
-                                className={login_style.text_style}
-                            />
-                        </div>
-                        <div className={login_style.login_button}>
-                            <button onClick={login} className={login_style.button}>
-                                Login
-                            </button>
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    );
-}
+  return (
+    <form onSubmit={onSubmit} className="card flex w-full max-w-md flex-col gap-5 p-8 md:p-10">
+      <BoltV size={40} />
+      <div>
+        <h1 className="h-display text-3xl">Member login</h1>
+        <p className="mt-2 text-chalk/65">Sign in to access ReVOLT team content.</p>
+      </div>
+      <label className="flex flex-col gap-2">
+        <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted">Username</span>
+        <input autoComplete="username" required value={username} onChange={(e) => setUsername(e.target.value)} className={field} />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted">Password</span>
+        <input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+      </label>
+      <p role="alert" className="min-h-5 text-sm text-[#ff7a6b]">{error}</p>
+      <button type="submit" disabled={busy} className="btn btn-volt disabled:opacity-60">
+        {busy ? "Signing in…" : "Log in"}
+      </button>
+    </form>
+  );
+};
