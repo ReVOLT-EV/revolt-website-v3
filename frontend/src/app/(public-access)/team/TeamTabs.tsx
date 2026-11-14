@@ -90,7 +90,7 @@ export default function TeamTabs({ teams }: { teams: SubTeam[] }) {
               </div>
               <div className="p-4">
                 <p className="font-medium leading-tight">{m.name}</p>
-                <p className={`mt-1 font-mono text-[11px] uppercase tracking-[0.08em] ${/lead|director/i.test(m.role) ? "text-volt" : "text-muted"}`}>{m.role}</p>
+                <p className={`mt-1 font-mono text-[11px] uppercase tracking-[0.08em] ${/lead|director|president|treasurer|manager/i.test(m.role) ? "text-volt" : "text-muted"}`}>{m.role}</p>
               </div>
             </li>
           ))}
