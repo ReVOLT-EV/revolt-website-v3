@@ -44,8 +44,8 @@ export default function VehiclesPage() {
               {/* 3D model slot: drop the three.js / react-three-fiber viewer here once the .glb is ready */}
               <div className="card relative mt-10 grid aspect-[16/10] place-items-center overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(var(--color-chalk)_1px,transparent_1px),linear-gradient(90deg,var(--color-chalk)_1px,transparent_1px)] [background-size:32px_32px]" />
-                <div className="relative text-center">
-                  <p className={`font-display text-[clamp(44px,8vw,96px)] leading-none ${toneText[v.tone]}`}>{v.id === "moto" ? "MOTO" : "SNOW"}</p>
+                <div className="@container relative w-full px-8 text-center">
+                  <p className={`font-display text-[clamp(32px,15cqi,104px)] leading-none ${toneText[v.tone]}`}>{v.id === "moto" ? "MOTO" : "SNOW"}</p>
                   <p className="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-muted">3D model coming soon</p>
                 </div>
               </div>

@@ -120,9 +120,12 @@ export default function Home() {
               <Reveal key={m.name} delay={i * 100}>
                 <Link
                   href="/vehicles"
-                  className={`card group flex h-full flex-col justify-between gap-16 p-8 transition-colors md:p-10 ${m.tone === "volt" ? "hover:border-volt" : "hover:border-glacier"}`}
+                  className={`card group flex h-full flex-col gap-14 p-8 transition-colors md:p-10 ${m.tone === "volt" ? "hover:border-volt" : "hover:border-glacier"}`}
                 >
-                  <span className={`font-display text-[clamp(56px,8vw,112px)] leading-none ${m.tone === "volt" ? "text-volt" : "text-glacier"}`}>{m.name}</span>
+                  <span className="@container block w-full">
+                    {/* sized to the card (cqi), so the wide display face never overflows */}
+                    <span className={`block font-display text-[clamp(36px,19cqi,120px)] leading-none ${m.tone === "volt" ? "text-volt" : "text-glacier"}`}>{m.name}</span>
+                  </span>
                   <span>
                     <span className="block text-xl font-medium">{m.title}</span>
                     <span className="mt-2 block max-w-md text-chalk/65">{m.body}</span>
