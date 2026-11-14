@@ -57,7 +57,7 @@ export function PageHero({
       )}
       <div className="wrap">
         <p className="eyebrow mb-6">{eyebrow}</p>
-        <h1 className="h-display max-w-5xl text-[clamp(34px,6.4vw,84px)]">{title}</h1>
+        <h1 className="h-display max-w-5xl text-[clamp(28px,7vw,84px)]">{title}</h1>
         {lead && <p className="mt-7 max-w-2xl text-[clamp(17px,1.5vw,20px)] text-chalk/75">{lead}</p>}
         {children && <div className="mt-9 flex flex-wrap gap-3">{children}</div>}
       </div>
