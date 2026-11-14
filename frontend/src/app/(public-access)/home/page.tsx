@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { PageHero, Reveal, SectionHeader, Ticker } from "@/components/ui";
 import { allSponsors } from "@/content/sponsors";
+import { introBootScript } from "@/features/intro/boot";
+import IntroMount, { ReplayIntroButton } from "@/features/intro/IntroMount";
 
 const focus = [
   {
@@ -40,6 +42,10 @@ const machines = [
 export default function Home() {
   return (
     <main>
+      {/* 8-bit intro game: plays once per session before the site */}
+      <script dangerouslySetInnerHTML={{ __html: introBootScript }} />
+      <IntroMount />
+
       {/* Hero */}
       <section className="relative isolate flex min-h-[100svh] items-end overflow-hidden">
         <video className="absolute inset-0 -z-20 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" aria-hidden="true">
@@ -54,6 +60,7 @@ export default function Home() {
           >
             <Link href="/sponsor-us" className="btn btn-volt">Power the build</Link>
             <Link href="/vehicles" className="btn btn-line text-chalk">See the builds</Link>
+            <ReplayIntroButton className="basis-full pt-2 text-left" />
           </PageHero>
         </div>
       </section>

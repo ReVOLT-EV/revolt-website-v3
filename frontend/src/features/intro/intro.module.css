@@ -1,0 +1,243 @@
+/* Ported from design/intro-prototype/game.src.html */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  background: #0d1015;
+  isolation: isolate;
+  touch-action: none;
+  overscroll-behavior: none;
+  transition: opacity 0.45s, visibility 0.45s;
+  --line: #2a2e33;
+  --muted: #a3a8b0;
+}
+.gone {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: pointer;
+}
+
+/* CRT scanlines */
+.intro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+}
+
+.hud {
+  position: absolute;
+  z-index: 3;
+  inset: 0 0 auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top, 0px)) var(--gutter) 0;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 1.6;
+  pointer-events: none;
+}
+.hud > * {
+  pointer-events: auto;
+}
+.hudLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.score {
+  color: var(--color-chalk);
+  letter-spacing: 0.06em;
+}
+.score span {
+  color: var(--color-volt);
+}
+.track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 8px;
+}
+.bar {
+  position: relative;
+  width: min(160px, 34vw);
+  height: 6px;
+  background: #1c2229;
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--color-volt);
+}
+.dot {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 6px;
+  height: 12px;
+  background: var(--color-chalk);
+  transform: translateX(-3px);
+}
+
+.skip {
+  font: 400 9px var(--font-pixel);
+  color: var(--muted);
+  background: rgba(11, 12, 14, 0.65);
+  border: 2px solid var(--line);
+  padding: 0 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.skip:hover {
+  color: var(--color-chalk);
+  border-color: var(--muted);
+}
+
+.prompt {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 20px));
+  transform: translateX(-50%);
+  font-family: var(--font-pixel);
+  font-size: clamp(9px, 1.2vw, 12px);
+  line-height: 1.8;
+  color: var(--color-chalk);
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 2px 2px 0 #000;
+  pointer-events: none;
+  animation: blink 1.1s steps(1) infinite;
+}
+.prompt b {
+  color: var(--color-volt);
+  font-weight: 400;
+}
+.prompt:empty {
+  display: none;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.toast {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 22%;
+  transform: translate(-50%, 0);
+  font-family: var(--font-pixel);
+  font-size: clamp(12px, 1.8vw, 18px);
+  color: var(--color-volt);
+  text-shadow: 3px 3px 0 #000;
+  opacity: 0;
+  pointer-events: none;
+}
+.toastShow {
+  animation: pop 1.1s steps(6) forwards;
+}
+@keyframes pop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 10px);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -14px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
+
+.pad {
+  position: absolute;
+  z-index: 4;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  display: none;
+  gap: 10px;
+}
+.pad button {
+  width: 60px;
+  height: 60px;
+  font: 400 16px var(--font-pixel);
+  color: var(--color-chalk);
+  background: rgba(11, 12, 14, 0.7);
+  border: 2px solid var(--line);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+}
+.pad button.on {
+  background: var(--color-volt);
+  color: var(--color-asphalt);
+  border-color: var(--color-volt);
+}
+@media (pointer: coarse) {
+  .pad {
+    display: flex;
+  }
+  .prompt {
+    bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 92px));
+  }
+}
+
+/* Volt light takeover → site */
+.flood {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 20px;
+  background: var(--color-volt);
+  color: var(--color-asphalt);
+  font-family: var(--font-pixel);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s;
+}
+.revealed .flood {
+  opacity: 1;
+  visibility: visible;
+}
+.revealed .hud,
+.revealed .prompt,
+.revealed .pad {
+  visibility: hidden;
+}
+.floodTitle {
+  font-size: clamp(14px, 2.6vw, 28px);
+  line-height: 1.6;
+}
+.floodScore {
+  font-size: clamp(9px, 1.1vw, 12px);
+  opacity: 0.7;
+}

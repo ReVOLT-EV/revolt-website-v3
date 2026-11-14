@@ -130,6 +130,22 @@ html.intro-locked body {
   overscroll-behavior: none;
 }
 
+/* Pre-paint cover for the intro game (see features/intro/IntroMount) */
+.intro-cover {
+  display: none;
+}
+html[data-intro="on"] .intro-cover {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: #0d1015;
+}
+html[data-intro="on"],
+html[data-intro="on"] body {
+  overflow: hidden;
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
