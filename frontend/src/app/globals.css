@@ -130,6 +130,13 @@ html.intro-locked body {
   overscroll-behavior: none;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 @keyframes ticker {
   to {
     transform: translateX(-50%);
