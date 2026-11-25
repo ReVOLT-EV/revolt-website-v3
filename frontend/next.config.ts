@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
   // Lets a verification build write somewhere other than .next, so it never
   // clobbers a running `npm run dev`. Usage: NEXT_DIST_DIR=.next-verify next build
   distDir: process.env.NEXT_DIST_DIR || ".next",
+
+  // On Vercel, vercel.json sends /api/* to the Flask service before Next sees it.
+  // For plain `npm run dev`, proxy /api/* to Flask running locally (backend/app.py).
+  async rewrites() {
+    if (process.env.NODE_ENV !== "development") return [];
+    return [{ source: "/api/:path*", destination: "http://127.0.0.1:5328/api/:path*" }];
+  },
 };
 
 export default nextConfig;

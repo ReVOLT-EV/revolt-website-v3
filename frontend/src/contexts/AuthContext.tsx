@@ -33,7 +33,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://revolt-website-logsys.onrender.com';
+  // Same-origin: vercel.json routes /api/* to the Flask backend service.
+  const BACKEND_URL = '/api';
   
   const checkAuth = async () => {
     try {
@@ -109,7 +110,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     checkAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = {

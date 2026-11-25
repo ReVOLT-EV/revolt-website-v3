@@ -17,7 +17,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push('/login');
     }
   }, [user, loading, router]);
 

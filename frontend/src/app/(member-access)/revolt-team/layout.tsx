@@ -1,23 +1,10 @@
-// app/(member-access)/layout.tsx
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { ReactNode } from 'react';
-// import { redirect } from 'next/navigation';
+import { ReactNode } from "react";
 
-export default async function MemberAccessLayout({ children }: { children: ReactNode }) {
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
-  // IMPORTANT: val must always be set to 1 for PRODUCTION. 
-  // Otherwise set to 0 when in DEVELOPMENT mode
-  const val = 1;
-
-  return (
-    <>
-      {val ? (
-        <ProtectedRoute>
-          <div>{children}</div>
-        </ProtectedRoute>
-      ) : (
-        <div>{children}</div>
-      )}
-    </>
-  );
+// src/middleware.ts is the real gate: it verifies the session JWT on the server
+// before any /revolt-team page is served. ProtectedRoute only handles the
+// client side (e.g. redirecting after a logout or token expiry mid-visit).
+export default function MemberAccessLayout({ children }: { children: ReactNode }) {
+  return <ProtectedRoute>{children}</ProtectedRoute>;
 }

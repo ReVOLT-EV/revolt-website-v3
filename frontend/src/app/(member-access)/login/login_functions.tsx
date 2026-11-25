@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { BoltV } from "@/components/brand/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://revolt-website-logsys.onrender.com";
+// Same-origin: vercel.json routes /api/* to the Flask backend service.
+const BACKEND_URL = "/api";
 
 const field =
   "w-full rounded-xl border border-line bg-night px-4 py-3.5 text-chalk placeholder:text-muted/70 outline-none transition-colors focus:border-volt";

@@ -4,71 +4,51 @@ In this repository, you will find two primary folders, the "backend" and "fronte
 
 ## Frontend And Backend
 
-### Backend
+Everything is hosted on **Vercel** as one project (no Render). `vercel.json` at the repo root defines two [Vercel Services](https://vercel.com/docs/services) (in beta) that deploy together:
 
-The backend consits of:
+- **frontend/**: the Next.js (TypeScript) site. All public content lives in `src/app/(public-access)`; text and lists live in `src/content`.
+- **backend/**: a small Flask app (`backend/app.py`) that handles member login (`/api/login`, `/api/check`, `/api/logout`) and the contact form (`/api/contact`).
 
-- data_information
-- email_backend
-- flask_backend
+Every request to `/api/*` goes to Flask; everything else goes to Next.js. Because they share one domain, there is no CORS setup and the frontend calls relative `/api/...` URLs.
 
-The "email" and "flask" backend have already been configured to help with credentials and communication services. The data_information folder will require monitoring as the folder is to be frequently updated with data from our projects.
+The member portal (`/revolt-team/*`) is protected on the server by `frontend/src/middleware.ts`, which checks the login cookie before any page is served.
 
-### Frontend
+### Environment variables
 
-The frontend is desgined with NextJS as the primary framework, with TypeScript as the primary language. The main section that will require monitoring is the (public-access) section as this is where all of the ReVOLT public content is available. Another frame used along side with NextJS is ThreeJS, which is intended for rendering our 3D models of the vehicles onto the website, making them interactable. Further more, while ruing the project LOCALLY, you will want to update the "val" variable in the "layout.tsx" file in the "(member-access)" folder to equal "0" (defualt is ALWAYS set to "1"), as this controls the protected status of the pages.
+Set these in the Vercel project settings (Production and Preview). For local development, put them in `backend/.env` and `frontend/.env.local` (both are gitignored).
+
+| Variable | Used by | Purpose |
+| --- | --- | --- |
+| `JWT_SECRET` | backend + frontend | Signs and verifies member logins. At least 32 random characters, e.g. `openssl rand -hex 32`. |
+| `TEAM_USERNAME`, `TEAM_PASSWORD` | backend | The shared member-portal login. |
+| `SMTP_HOST`, `SMTP_PORT` | backend | Mail server, e.g. `smtp.gmail.com` and `465`. |
+| `EMAIL_USER`, `EMAIL_PASS` | backend | Mailbox the contact form sends from (for Gmail, use an app password). |
+| `CONTACT_TO` | backend | Optional: where contact messages go. Defaults to `EMAIL_USER`. |
 
 ## How To Run Locally
 
-### Via Terminals
-
-When testing the program locally, you will be required to open 3 seperate terminals (all can be displayed at once if you want to). The 3 terminals will need to be run and each will need to be activated in the correct directory.
-
-- Two of the terminal will need to used to run the backend, one for the email_backend and one for the flask_back end. In order to run the email_backend, you will need to use the command (#1) and to run the flask_backend, you will need to use the command (#2):
+Option 1, with the Vercel CLI (runs both services exactly like production):
 
 ```bash
-#1
-node server.js
-
-#2
-python app.py
+vercel dev
 ```
 
-- The final terminal will need to used to run the frontend. In order to run the frontend, you will want to first run command (#3) to make sure the dependencies are up-to-date, then you will want to run command (#4) to start the program (should be running on localhost:3000 by default):
+Option 2, two terminals:
 
 ```bash
-#1
-npm update
+# Terminal 1: backend (http://127.0.0.1:5328)
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
 
-#2
+# Terminal 2: frontend (http://localhost:3000)
+cd frontend
+npm install
 npm run dev
 ```
 
-By this point, all of the terminals should be up and running and you should be able to access the site locally/in development mode at localhost:3000.
-
-### Via Docker
-
-If you have Docker Desktop installed and configured to be linked with you GitHub account, you have the option to run the whole program in a single terminal (albeit might take a little bit longer to boot up). You first want to make sure you are at the root directory of the project and have Docker Desktop running in the background. Once there, you will want to run the command:
-
-```bash
-docker compose up --build
-#or
-docker compose up -d --build #Enables access to the terminal
-```
-
-When running in detached mode, you can also run the following command if you want to chec the logs for the folders being run (the folder types can be found by checking the docker-compose.yml file):
-
-```bash
-docker compose logs (folder-type)
-```
-
-When you are done, run the command:
-
-```bash
-docker compose down --rmi all --volumes
-```
-
-This ensure that the images are wiped after every run and are rebuilt whenever the program is run locally/in development mode. This process is setup so that all memebrs can easily execute the program locally. There are other docker commands that can be used to check for the status of the program, however this was mainly desgined for internal use.
+In development the Next.js server forwards `/api/*` to Flask on port 5328. To use the member portal locally, set `JWT_SECRET` in both `.env` files and log in with your local `TEAM_USERNAME` / `TEAM_PASSWORD`.
 
 ## Working On GitHub
 
