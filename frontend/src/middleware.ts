@@ -27,5 +27,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // Vercel Services don't support Edge functions, so run on Node.js.
+  runtime: "nodejs",
   matcher: ["/revolt-team", "/revolt-team/:path*"],
 };
