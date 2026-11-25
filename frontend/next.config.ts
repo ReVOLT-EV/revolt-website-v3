@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   // clobbers a running `npm run dev`. Usage: NEXT_DIST_DIR=.next-verify next build
   distDir: process.env.NEXT_DIST_DIR || ".next",
 
+  // Vercel Services (beta) doesn't serve Next's /_next/image optimizer, so
+  // images are served as-is. Keep files in public/ web-sized (≤2000px).
+  images: { unoptimized: true },
+
   // On Vercel, vercel.json sends /api/* to the Flask service before Next sees it.
   // For plain `npm run dev`, proxy /api/* to Flask running locally (backend/app.py).
   async rewrites() {
